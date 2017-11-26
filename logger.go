@@ -15,6 +15,8 @@ import (
 	"strings"
 	"sync/atomic"
 	"time"
+
+	colorable "github.com/mattn/go-colorable"
 )
 
 // Redactor is an interface for types that may contain sensitive information
@@ -121,7 +123,7 @@ func Reset() {
 	// if there's no backends at all configured, we could use some tricks to
 	// automatically setup backends based if we have a TTY or not.
 	sequenceNo = 0
-	b := SetBackend(NewLogBackend(os.Stderr, "", log.LstdFlags))
+	b := SetBackend(NewLogBackend(colorable.NewColorableStderr(), "", log.LstdFlags))
 	b.SetLevel(DEBUG, "")
 	SetFormatter(DefaultFormatter)
 	timeNow = time.Now
@@ -269,7 +271,7 @@ func (l *Logger) Debugf(format string, args ...interface{}) {
 func defaultArgsFormat(argc int) string {
 	f := strings.Repeat("%s ", argc)
 	if argc > 0 {
-		f = f[:len(f) - 1]
+		f = f[:len(f)-1]
 	}
 	return f
 }

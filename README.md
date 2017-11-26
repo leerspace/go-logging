@@ -42,8 +42,14 @@ func (p Password) Redacted() interface{} {
 
 func main() {
 	// For demo purposes, create two backend for os.Stderr.
-	backend1 := logging.NewLogBackend(os.Stderr, "", 0)
-	backend2 := logging.NewLogBackend(os.Stderr, "", 0)
+	var stderr io.Writer = os.Stderr
+	if runtime.GOOS == "windows" {
+		// colorable is needed for windows color support
+		stderr = colorable.NewColorableStderr()
+	}
+
+	backend1 := logging.NewLogBackend(stderr, "", 0)
+	backend2 := logging.NewLogBackend(stderr, "", 0)
 
 	// For messages written to backend2 we want to add some additional
 	// information to the output, including the used log level and the name of
